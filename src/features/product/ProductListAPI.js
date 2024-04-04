@@ -10,13 +10,25 @@ export function fetchAllProducts() {
     }
   );
 }
-export function fetchProductsByFilters(filter) {
+export function fetchProductsByFilters(filter,sort) {
   //to do for multi values
   //filter={"category:{"smartphone","laptop"}}
+  // sort={_sort:"price",_order="desc"}
   let querystring='';
   for(let key in filter)
   {
-    querystring+=`${key}=${filter[key]}&`
+    const categoryvalues=filter[key];
+    //should be >=1 for checking the length
+    if(categoryvalues.length>0)
+    {
+       const lastcategoryvalue=categoryvalues[categoryvalues.length-1];
+       querystring+=`${key}=${lastcategoryvalue}&`
+    }
+  }
+
+  for(let key in sort)
+  {
+    querystring+=`${key}=${sort[key]}&`
   }
   return new Promise(async (resolve) =>
     {

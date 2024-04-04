@@ -16,6 +16,7 @@ import {
 } from "@heroicons/react/20/solid";
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/20/solid";
 import { Link } from "react-router-dom";
+//TODO for clicking filters in mobile categories its not retaining its state.
 
 const sortOptions = [
   { name: "Best Rating", sort: "rating", order: "desc", current: false },
@@ -242,33 +243,44 @@ export default function ProductList() {
   const products = useSelector(selectAllProducts);
 
   const [filter, setFilter] = useState({});
-
+  const [sort, setSort] = useState({});
   const handlefilter = (e, section, option) => {
     //TODO: on server it will suppoort mulitple categories 
+    
     const newFilter = { ...filter };
     if(e.target.checked)
     {
-      newFilter [section.id]= option.value;
+      if(newFilter[section.id])
+      {
+        newFilter [section.id].push(option.value);
+      }
+      else
+      {
+        newFilter[section.id]=[option.value];
+
+      }
     }
     else
     {
-         delete newFilter[section.id];
+        const index=newFilter[section.id].findIndex(el=>el===option.value)
+        newFilter[section.id].splice(index,1);
     }
+    console.log({newFilter});
     setFilter(newFilter);
-    dispatch(fetchProductsByFiltersAsync(newFilter));
-    console.log(section.id, option.value);
+    // dispatch(fetchProductsByFiltersAsync(newFilter));
   };
 
   const handleSort = (e, option) => {
     //TODO to do proper sorting creating middleware since its not supporting
-    const newFilter = { ...filter, _sort: option.sort };
-    setFilter(newFilter);
-    dispatch(fetchProductsByFiltersAsync(newFilter));
+    const sort = {  _sort: option.sort };
+    console.log({sort});
+    setSort(sort);
+    // dispatch(fetchProductsByFiltersAsync(newFilter));
   };
 
   useEffect(() => {
-    dispatch(fetchAllProductsAsync());
-  }, [dispatch]);
+    dispatch(fetchProductsByFiltersAsync({filter,sort}));
+  }, [dispatch,filter,sort]);
 
   return (
     <div className="bg-white">
