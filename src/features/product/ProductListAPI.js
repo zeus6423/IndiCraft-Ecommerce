@@ -10,10 +10,12 @@ export function fetchAllProducts() {
     }
   );
 }
-export function fetchProductsByFilters(filter,sort) {
+export function fetchProductsByFilters(filter,sort,pagination) {
   //to do for multi values
   //filter={"category:{"smartphone","laptop"}}
   // sort={_sort:"price",_order="desc"}
+  // pagination = {_page=1,_limit=10}
+  //TODO for pagination i will have to pass data.data;
   let querystring='';
   for(let key in filter)
   {
@@ -29,6 +31,10 @@ export function fetchProductsByFilters(filter,sort) {
   for(let key in sort)
   {
     querystring+=`${key}=${sort[key]}&`
+  }
+  for(let key in pagination)
+  {
+    querystring+=`${key}=${pagination[key]}&`
   }
   return new Promise(async (resolve) =>
     {
