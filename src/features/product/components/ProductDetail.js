@@ -29,6 +29,9 @@ import {
   selectProductById
 } from "../ProductListSlice";
 import { userEventApi } from '@testing-library/user-event/dist/cjs/setup/api.js';
+import { addToCartAsync } from "../../cart/CartSlice";
+import {selectLoggedInUser} from '../../auth/authSlice'
+
 //TODO :IN server data we will add colors, sizes , highlights to each product 
 const colors= [
   { name: 'White', class: 'bg-white', selectedClass: 'ring-gray-400' },
@@ -63,6 +66,21 @@ export default function  ProductDetail() {
   const [selectedSize, setSelectedSize] = useState(sizes[2])
   const product=useSelector(selectProductById)
   const params=useParams();
+  const user=useSelector(selectLoggedInUser)
+
+
+  
+  
+  const handleCart=(e)=>
+  {
+      
+      e.preventDefault();
+      dispatch(addToCartAsync({...product,quantity:1,user:user.id}))
+      
+  }
+
+
+
   useEffect(()=>
   {
   dispatch(fetchProductByIdAsync(params.id))
@@ -268,6 +286,7 @@ console.log(product)
               </div>
 
               <button
+                onClick={handleCart}
                 type="submit"
                 className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 px-8 py-3 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
